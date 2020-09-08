@@ -23,6 +23,16 @@ jobs:
       script:
         - $DARTFMT -n $PACKAGES --set-exit-if-changed
 
+    - stage: iOS Build APP
+      os: osx
+      osx_image: xcode11
+      before_script:
+        - export HOMEBREW_NO_AUTO_UPDATE=1
+        - brew install cocoapods || echo 'ignore exit(1)'
+        - brew link --overwrite cocoapods
+      script:
+        - $FLUTTER build ios --no-codesign
+
     - stage: Android Build APK
       language: android
       dist: trusty
@@ -46,15 +56,3 @@ jobs:
         - $FLUTTER --version
         - $FLUTTER doctor
         - $FLUTTER build apk
-
-    - stage: iOS Build APP
-      os: osx
-      osx_image: xcode11
-      before_script:
-        - open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app
-        - export HOMEBREW_NO_AUTO_UPDATE=1
-        - brew install ios-deploy
-        - brew install cocoapods || echo 'ignore exit(1)'
-        - brew link --overwrite cocoapods
-      script:
-        - $FLUTTER build ios -no-codesign
